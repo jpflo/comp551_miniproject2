@@ -1,0 +1,7 @@
+Model,BO/Count,Ngram,TFIDF,MVS,Error
+Logistic Regression,Count,"(1,1)",FALSE,0.8502,0.0058
+Decision Tree,Count,"(1,1)",FALSE,0.7017,0.0115
+Logistic Regression,Count,"(1,2)",FALSE,0.8542,0.0064
+Logistic Regression,Binary,"(1,2)",FALSE,0.8745,0.0048
+Logistic Regression,Binary,"(1,2)",TRUE,0.8898,0.0058
+Logistic Regression,Count,"(1,1)",TRUE,0.8846,0.003

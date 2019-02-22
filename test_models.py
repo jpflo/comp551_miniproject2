@@ -38,6 +38,7 @@ if (not import_bool):
 
 else:
     raw_data = pd.read_pickle('./src/data/interim/extracted_training_text')
+    
 #%% Extract Features
 
 print('Extracting Raw Data')
@@ -246,6 +247,7 @@ bo_tfidf_lr_params_6 = {"vect__binary": [True],
                                  900, 1000, 2000, 5000, 7500, 9000, 10000],
                       "clf__max_iter": [150] }
 
+
 bo_tfidf_lr_params_7 = {"vect__binary": [True], 
                       "vect__ngram_range": [(1,2)],
                       "tfidf__use_idf": [True],
@@ -253,12 +255,6 @@ bo_tfidf_lr_params_7 = {"vect__binary": [True],
                       "clf__C": [8000,8500],
                       "clf__max_iter": [150] }
 
-param_master_grid = {#"Pipe_1_BO-LR": lr_params,
-                     #"Pipe_2_TFIDF-LR": tfidf_lr_params,
-                     #"Pipe_3_BO-DT": bo_dt_params,
-                     #"Pipe_4_TFIDF-DT": tfidf_dt_params
-                     #"Pipe_6_TRUE_BO-NGRAM-LR": bo_lr_params
-                     "Pipe_11_BO-TFIDF-LR": bo_tfidf_lr_params_4}
 
 
 # Entry: "Key": [Pipeline, Parameter Grid]
@@ -355,3 +351,4 @@ for i in range(len(y_test_pred)):
     
 f3.close()
     
+

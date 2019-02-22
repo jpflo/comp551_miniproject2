@@ -68,7 +68,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 print('Initializing Model')
 ## initialize the model
-clf = CustomBernoulliNaiveBayes(laplaceSmoothing = True)  # our written model, can use all the SKLearn functions with it (see src/models/custom_models for the code)
+#clf = CustomBernoulliNaiveBayes(laplaceSmoothing = True)  # our written model, can use all the SKLearn functions with it (see src/models/custom_models for the code)
 #clf = DecisionTreeClassifier(random_state=0)
 #clf = SVC(gamma=0.001, C=100.)
 #clf = BernoulliNB()  # to compare our custom model with - we get identical results, but slightly slower
@@ -139,39 +139,30 @@ def report(results, n_top, trial, runtime, path):
 
 
 ## Feature Extraction Pipelines
-# Binary Occurance/Logistic Regression
-pipe_bo_lr = Pipeline([('vect', CountVectorizer() ),
-                       ('norm', Normalizer() ),
-                       ('clf', LogisticRegression() )])
-
-# TF-IDF/Logistic Regression
+# Logistic Regression
 pipe_tfidf_lr = Pipeline([('vect', CountVectorizer() ),
                           ('tfidf', TfidfTransformer() ),
                           ('norm', Normalizer() ),
-                          ('clf', LogisticRegression() )]) 
+                          ('clf', LogisticRegression() )])
 
-# Binary Occurance/Decision Tree
-pipe_bo_dt = Pipeline([('vect', CountVectorizer() ),
-                       ('norm', Normalizer() ),
-                       ('clf', DecisionTreeClassifier() )])
 
-# TF-IDF/Logistic Regression
+# Decision Trees
 pipe_tfidf_dt = Pipeline([('vect', CountVectorizer() ),
                           ('tfidf', TfidfTransformer() ),
                           ('norm', Normalizer() ),
-                          ('clf', DecisionTreeClassifier() )]) 
+                          ('clf', DecisionTreeClassifier() )])
 
-pipeline_list = {#"Pipe_1_BO-LR": pipe_bo_lr
+# Outdated --------------------------------------------------------------------
+    
+#pipeline_list = {#"Pipe_1_BO-LR": pipe_bo_lr
 #                 "Pipe_2_TFIDF-LR": pipe_tfidf_lr, 
 #                 "Pipe_3_BO-DT": pipe_bo_dt, 
 #                 "Pipe_4_TFIDF-DT": pipe_tfidf_dt
 #                 "Pipe_5_BO-NGRAM-LR": pipe_bo_lr
 #                 "Pipe_6_TRUE_BO-NGRAM-LR": pipe_tfidf_lr,
 #                  "Pipe_7_BO-TFIDF-LR": pipe_tfidf_lr}
-                  #"Pipe_8_BO-TFIDF-LR": pipe_tfidf_lr}
-                  "Pipe_11_BO-TFIDF-LR": pipe_tfidf_lr}
-  
-print('Defining Parameters')
+#                  "Pipe_8_BO-TFIDF-LR": pipe_tfidf_lr}
+#                  "Pipe_11_BO-TFIDF-LR": pipe_tfidf_lr}
 
 #tfidf_params = {"vect__ngram_range": [(1,1)], 
 #                "tfidf__use_idf": [True]}
@@ -180,6 +171,9 @@ print('Defining Parameters')
 #             "clf__min_samples_split": [2,3,4]}
 #
 #lr_params = {"clf__tol":[1e-4], "clf__solver":["lbfgs"]}
+
+print('Defining Parameters')
+
 
 bo_params = {"vect__ngram_range": [(1,1),(1,2),(1,3),(2,2),(2,3),(3,3)],
                                    "vect__binary": [True,False]}
@@ -205,60 +199,78 @@ bo_dt_params.update(bo_params)
 tfidf_lr_params.update(tfidf_params)
 tfidf_dt_params.update(tfidf_params)
 
-bo_tfidf_lr_params = {"vect__binary": [True], 
-                      "vect__ngram_range": [(1,2)],
-                      "tfidf__use_idf": [True],
-                      "clf__solver": ['lbfgs'],
-                      "clf__C": [1,10,100,1000]}
+# Outdated Test Parameters ----------------------------------------------------
+#bo_tfidf_lr_params = {"vect__binary": [True], 
+#                      "vect__ngram_range": [(1,2)],
+#                      "tfidf__use_idf": [True],
+#                      "clf__solver": ['lbfgs'],
+#                      "clf__C": [1,10,100,1000]}
+#
+#bo_tfidf_lr_params_2 = {"vect__binary": [True], 
+#                      "vect__ngram_range": [(1,2)],
+#                      "tfidf__use_idf": [True],
+#                      "clf__solver": ['lbfgs'],
+#                      "clf__C": [2000,5000,10000,20000,50000]}
+#
+#bo_tfidf_lr_params_3 = {"vect__binary": [True], 
+#                      "vect__ngram_range": [(1,2)],
+#                      "tfidf__use_idf": [True],
+#                      "clf__solver": ['lbfgs'],
+#                      "clf__C": [10000],
+#                      "clf__max_iter": [100,150,200,250,300] }
+#
+#
+#bo_tfidf_lr_params_4 = {"vect__binary": [True], 
+#                      "vect__ngram_range": [(1,2)],
+#                      "tfidf__use_idf": [True],
+#                      "clf__solver": ['lbfgs'],
+#                      "clf__C": [8600,8700,8800,8900,9100,9200,9300,9400],
+#                      "clf__max_iter": [150] }
+#
+#bo_tfidf_lr_params_5 = {"vect__binary": [True], 
+#                      "vect__ngram_range": [(1,2),(1,3)],
+#                      "tfidf__use_idf": [True],
+#                      "clf__solver": ['lbfgs'],
+#                      "clf__C": [10000],
+#                      "clf__max_iter": [150] }
+#
+#bo_tfidf_lr_params_6 = {"vect__binary": [True], 
+#                      "vect__ngram_range": [(1,2),(2,2)],
+#                      "tfidf__use_idf": [True],
+#                      "clf__solver": ['lbfgs'],
+#                      "clf__C": [50, 75, 80, 90, 100, 150, 200, 500, 750, 
+#                                 900, 1000, 2000, 5000, 7500, 9000, 10000],
+#                      "clf__max_iter": [150] }
+#
+#bo_tfidf_lr_params_7 = {"vect__binary": [True], 
+#                      "vect__ngram_range": [(1,2)],
+#                      "tfidf__use_idf": [True],
+#                      "clf__solver": ['lbfgs'],
+#                      "clf__C": [8000,8500],
+#                      "clf__max_iter": [150] }
+#
+#param_master_grid = {#"Pipe_1_BO-LR": lr_params,
+#                     #"Pipe_2_TFIDF-LR": tfidf_lr_params,
+#                     #"Pipe_3_BO-DT": bo_dt_params,
+#                     #"Pipe_4_TFIDF-DT": tfidf_dt_params
+#                     #"Pipe_6_TRUE_BO-NGRAM-LR": bo_lr_params
+#                     "Pipe_11_BO-TFIDF-LR": bo_tfidf_lr_params_4}
+# -----------------------------------------------------------------------------
 
-bo_tfidf_lr_params_2 = {"vect__binary": [True], 
-                      "vect__ngram_range": [(1,2)],
-                      "tfidf__use_idf": [True],
-                      "clf__solver": ['lbfgs'],
-                      "clf__C": [2000,5000,10000,20000,50000]}
+rt_params_lr = {"vect__binary": [True], 
+               "vect__ngram_range": [(1,2)],
+               "tfidf__use_idf": [True],
+               "clf__solver": ['lbfgs'],
+               "clf__C": [7500],
+               "clf__max_iter": [150] }
 
-bo_tfidf_lr_params_3 = {"vect__binary": [True], 
-                      "vect__ngram_range": [(1,2)],
-                      "tfidf__use_idf": [True],
-                      "clf__solver": ['lbfgs'],
-                      "clf__C": [10000],
-                      "clf__max_iter": [100,150,200,250,300] }
-
-
-bo_tfidf_lr_params_4 = {"vect__binary": [True], 
-                      "vect__ngram_range": [(1,2)],
-                      "tfidf__use_idf": [True],
-                      "clf__solver": ['lbfgs'],
-                      "clf__C": [8600,8700,8800,8900,9100,9200,9300,9400],
-                      "clf__max_iter": [150] }
-
-bo_tfidf_lr_params_5 = {"vect__binary": [True], 
-                      "vect__ngram_range": [(1,2),(1,3)],
-                      "tfidf__use_idf": [True],
-                      "clf__solver": ['lbfgs'],
-                      "clf__C": [10000],
-                      "clf__max_iter": [150] }
-
-bo_tfidf_lr_params_6 = {"vect__binary": [True], 
-                      "vect__ngram_range": [(1,2),(2,2)],
-                      "tfidf__use_idf": [True],
-                      "clf__solver": ['lbfgs'],
-                      "clf__C": [50, 75, 80, 90, 100, 150, 200, 500, 750, 
-                                 900, 1000, 2000, 5000, 7500, 9000, 10000],
-                      "clf__max_iter": [150] }
-
-
-bo_tfidf_lr_params_7 = {"vect__binary": [True], 
-                      "vect__ngram_range": [(1,2)],
-                      "tfidf__use_idf": [True],
-                      "clf__solver": ['lbfgs'],
-                      "clf__C": [8000,8500],
-                      "clf__max_iter": [150] }
-
-
+rt_params_dt = {"vect__binary": [True], 
+               "vect__ngram_range": [(1,2)],
+               "tfidf__use_idf": [True]}
 
 # Entry: "Key": [Pipeline, Parameter Grid]
 
+# Example Grid
 #pipeline_grid = {"Pipe_1_BO-LR": [pipe_bo_lr, lr_params],
 #                 "Pipe_2_TFIDF-LR":[pipe_tfidf_lr, tfidf_lr_params],
 #                 "Pipe_3_BO-DT": [pipe_bo_dt, bo_dt_params],
@@ -266,7 +278,8 @@ bo_tfidf_lr_params_7 = {"vect__binary": [True],
 #                 "Pipe_6_TRUE_BO-NGRAM-LR": [pipe_bo_lr, bo_lr_params],
 #                 "Pipe_7_BO-TFIDF-LR": [pipe_bo_lr, bo_tfidf_lr_params_4]}
 
-pipeline_grid = {"Pipe_14_BO-TFIDF-LR": [pipe_tfidf_lr, bo_tfidf_lr_params_7]}
+pipeline_grid = {"Pipe_15_RT_Comp_LR": [pipe_tfidf_lr, rt_params_lr],
+                 "Pipe_16_RT_Comp_DT": [pipe_tfidf_dt, rt_params_dt]}
 
 #%% Run Pipelines
 path = "run_" + time.strftime("%m%d-%H%M")
@@ -287,6 +300,7 @@ for pipe in pipeline_grid:
     runtime = end - start
     print("GridSearchCV for {} took {} seconds".format(pipe,runtime))
     
+    # Change the integer according to the number of pipeline results to print
     top_params = report(grid_search.cv_results_, 31, pipe, runtime, path)
     
     cl_rpt = metrics.classification_report(y_test,y_pred, target_names=('Negative','Positive'))
@@ -304,51 +318,55 @@ for pipe in pipeline_grid:
     f2.close()
 
 #%% Run on Test Files
-  
 from src.data.make_dataset import raw_data_extraction_test_set
+
+gen_pred = input('Do you want to generate a Kaggle CSV File?')
+
+if gen_pred:
+    imp_test = input('Do you want to load from ./src/data/interim/extracted_test_text?')
+    
+if (not imp_test):
   
-test_directories = ['./src/data/raw/test/']
-raw_text_lst, raw_text_id = raw_data_extraction_test_set(test_directories)
+    test_directories = ['./src/data/raw/test/']
+    raw_text_lst, raw_text_id = raw_data_extraction_test_set(test_directories)
     
-raw_test_data = pd.DataFrame({'id':raw_text_id, 'raw_text':raw_text_lst})
-raw_test_data.to_pickle('./src/data/interim/extracted_test_text')
+    raw_test_data = pd.DataFrame({'id':raw_text_id, 'raw_text':raw_text_lst})
+    raw_test_data.to_pickle('./src/data/interim/extracted_test_text')
 
-#%% Generate CSV Prediction
+else:
+    raw_test_data = pd.read_pickle('./src/data/interim/extracted_test_text')
 
-raw_test_data = pd.read_pickle('./src/data/interim/extracted_test_text')
-
-test_pipeline =  Pipeline([('vect', CountVectorizer()),
-                          ('tfidf', TfidfTransformer() ),
-                          ('norm', Normalizer() ),
-                          ('clf', LogisticRegression() )]) 
-
-test_params = {"vect__binary": [True], 
-               "vect__ngram_range": [(1,2)],
-               "tfidf__use_idf": [True],
-               "clf__solver": ['lbfgs'],
-               "clf__C": [7500],
-               "clf__max_iter": [150] }
-
-grid_search = GridSearchCV(test_pipeline, 
-                           param_grid = test_params, 
-                           cv=5)
-
-# Fit to entire training data set
-grid_search.fit(data['raw_text'],data['target'])
-
-
-y_test_pred = grid_search.predict(raw_test_data['raw_text'])
-
-#%% Write to File
-filename3 = "./src/models/test_prediction.csv"
-f3 = open(filename3,"a")
-
-
-f3.write("Id,Category\n")
-
-for i in range(len(y_test_pred)):
-    f3.write(raw_test_data['id'][i] + "," + str(y_test_pred[i]) + "\n")
+if gen_pred:
+    test_pipeline =  Pipeline([('vect', CountVectorizer()),
+                              ('tfidf', TfidfTransformer() ),
+                              ('norm', Normalizer() ),
+                              ('clf', LogisticRegression() )]) 
     
-f3.close()
+    test_params = {"vect__binary": [True], 
+                   "vect__ngram_range": [(1,2)],
+                   "tfidf__use_idf": [True],
+                   "clf__solver": ['lbfgs'],
+                   "clf__C": [7500],
+                   "clf__max_iter": [150] }
     
-
+    grid_search = GridSearchCV(test_pipeline, 
+                               param_grid = test_params, 
+                               cv=5)
+    
+    # Fit to entire training data set
+    grid_search.fit(data['raw_text'],data['target'])
+    
+    
+    y_test_pred = grid_search.predict(raw_test_data['raw_text'])
+    
+    filename3 = "./src/models/test_prediction.csv"
+    f3 = open(filename3,"a")
+    
+    
+    f3.write("Id,Category\n")
+    
+    for i in range(len(y_test_pred)):
+        f3.write(raw_test_data['id'][i] + "," + str(y_test_pred[i]) + "\n")
+        
+    f3.close()
+    

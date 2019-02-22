@@ -38,6 +38,7 @@ if (not import_bool):
 
 else:
     raw_data = pd.read_pickle('./src/data/interim/extracted_training_text')
+    
 #%% Extract Features
 
 print('Extracting Raw Data')
@@ -246,12 +247,14 @@ bo_tfidf_lr_params_6 = {"vect__binary": [True],
                                  900, 1000, 2000, 5000, 7500, 9000, 10000],
                       "clf__max_iter": [150] }
 
-param_master_grid = {#"Pipe_1_BO-LR": lr_params,
-                     #"Pipe_2_TFIDF-LR": tfidf_lr_params,
-                     #"Pipe_3_BO-DT": bo_dt_params,
-                     #"Pipe_4_TFIDF-DT": tfidf_dt_params
-                     #"Pipe_6_TRUE_BO-NGRAM-LR": bo_lr_params
-                     "Pipe_11_BO-TFIDF-LR": bo_tfidf_lr_params_4}
+
+bo_tfidf_lr_params_7 = {"vect__binary": [True], 
+                      "vect__ngram_range": [(1,2)],
+                      "tfidf__use_idf": [True],
+                      "clf__solver": ['lbfgs'],
+                      "clf__C": [8000,8500],
+                      "clf__max_iter": [150] }
+
 
 
 # Entry: "Key": [Pipeline, Parameter Grid]
@@ -263,7 +266,7 @@ param_master_grid = {#"Pipe_1_BO-LR": lr_params,
 #                 "Pipe_6_TRUE_BO-NGRAM-LR": [pipe_bo_lr, bo_lr_params],
 #                 "Pipe_7_BO-TFIDF-LR": [pipe_bo_lr, bo_tfidf_lr_params_4]}
 
-pipeline_grid = {"Pipe_13_BO-TFIDF-LR": [pipe_tfidf_lr, bo_tfidf_lr_params_6]}
+pipeline_grid = {"Pipe_14_BO-TFIDF-LR": [pipe_tfidf_lr, bo_tfidf_lr_params_7]}
 
 #%% Run Pipelines
 path = "run_" + time.strftime("%m%d-%H%M")
@@ -299,3 +302,53 @@ for pipe in pipeline_grid:
     f2 = open(filename2,'a')
     f2.write(str(grid_search.cv_results_))
     f2.close()
+
+#%% Run on Test Files
+  
+from src.data.make_dataset import raw_data_extraction_test_set
+  
+test_directories = ['./src/data/raw/test/']
+raw_text_lst, raw_text_id = raw_data_extraction_test_set(test_directories)
+    
+raw_test_data = pd.DataFrame({'id':raw_text_id, 'raw_text':raw_text_lst})
+raw_test_data.to_pickle('./src/data/interim/extracted_test_text')
+
+#%% Generate CSV Prediction
+
+raw_test_data = pd.read_pickle('./src/data/interim/extracted_test_text')
+
+test_pipeline =  Pipeline([('vect', CountVectorizer()),
+                          ('tfidf', TfidfTransformer() ),
+                          ('norm', Normalizer() ),
+                          ('clf', LogisticRegression() )]) 
+
+test_params = {"vect__binary": [True], 
+               "vect__ngram_range": [(1,2)],
+               "tfidf__use_idf": [True],
+               "clf__solver": ['lbfgs'],
+               "clf__C": [7500],
+               "clf__max_iter": [150] }
+
+grid_search = GridSearchCV(test_pipeline, 
+                           param_grid = test_params, 
+                           cv=5)
+
+# Fit to entire training data set
+grid_search.fit(data['raw_text'],data['target'])
+
+
+y_test_pred = grid_search.predict(raw_test_data['raw_text'])
+
+#%% Write to File
+filename3 = "./src/models/test_prediction.csv"
+f3 = open(filename3,"a")
+
+
+f3.write("Id,Category\n")
+
+for i in range(len(y_test_pred)):
+    f3.write(raw_test_data['id'][i] + "," + str(y_test_pred[i]) + "\n")
+    
+f3.close()
+    
+
